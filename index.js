@@ -2,6 +2,10 @@ const puppeteer = require('puppeteer')
 const PDFMerge = require('easy-pdf-merge')
 const { path, fs, logger, chalk } = require('@vuepress/shared-utils')
 
+logger.setOptions({
+  logLevel: 1
+})
+
 module.exports = (opts, ctx) => ({
   name: 'vuepress-plugin-export',
 
@@ -16,10 +20,12 @@ module.exports = (opts, ctx) => ({
           if (err) {
             console.error(chalk.red(err))
           }
-          console.log(`[vuepress-plugin-export] Start to generate current site to PDF ...`)
+          logger.setOptions({
+            logLevel: 3
+          })
+          logger.info(`Start to generate current site to PDF ...`)
           try {
-            await exportPDF(ctx, port, host)
-            console.log(`[vuepress-plugin-export] Success`)
+            await generatePDF(ctx, port, host)
           } catch (error) {
             console.error(chalk.red(error))
           }
@@ -30,11 +36,7 @@ module.exports = (opts, ctx) => ({
   }
 })
 
-function flatternPath(p) {
-  return p.replace(/\//g, '-').replace('-', '').replace(/\.html/, '').replace(/-$/, '')
-}
-
-async function exportPDF(ctx, port, host) {
+async function generatePDF(ctx, port, host) {
   const { pages, outDir, tempPath, siteConfig } = ctx
   const tempDir = path.resolve(tempPath, 'pdf')
   fs.ensureDirSync(tempDir)
@@ -44,7 +46,7 @@ async function exportPDF(ctx, port, host) {
       url: page.path,
       title: page.title,
       location: `http://${host}:${port}${page.path}`,
-      path: `${tempDir}/${flatternPath(page.path)}.pdf`
+      path: `${tempDir}/${page.key}.pdf`
     }
   })
 
@@ -59,19 +61,19 @@ async function exportPDF(ctx, port, host) {
   }
 
   const files = exportPages.map(({ path }) => path)
-  const outputFilename = siteConfig.title || 'my-vuepress-site'
+  const outputFilename = siteConfig.title || 'site'
   await new Promise((resolve, reject) => {
     PDFMerge(files, `${outputFilename}.pdf`, (err) => {
       if (err) {
         reject(err)
       }
-      logger.success(`export ${outputFilename}.pdf file success!`)
+      logger.success(`Export ${chalk.yellow(`${outputFilename}.pdf`)} file!`)
       resolve()
     })
   })
 
   await browser.close()
-  fs.removeSync(tempDir)
+  // fs.removeSync(tempDir)
 }
 
 
