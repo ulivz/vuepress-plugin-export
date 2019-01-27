@@ -10,7 +10,8 @@
   "scripts": {
     "export": "vuepress export example",
     "test": "npm run lint && jest",
-    "lint": "xo"
+    "lint": "xo",
+    "release": "release-it"
   },
   "repository": {
     "url": "ulivz/vuepress-plugin-export",
@@ -27,7 +28,9 @@
     "eslint-config-sherry": "0.0.1",
     "husky": "1.2.0",
     "lint-staged": "8.1.0",
-    "jest": "23.6.0"
+    "jest": "23.6.0",
+    "release-it": "v7.4.8",
+    "conventional-changelog-cli": "^2.0.1"
   },
   "jest": {
     "testEnvironment": "node"
