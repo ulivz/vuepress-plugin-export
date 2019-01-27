@@ -37,6 +37,21 @@ Then run:
 vuepress export [path/to/your/docs]
 ```
 
+## Development
+
+```bash
+git clone https://github.com/ulivz/vuepress-plugin-export
+cd vuepress-plugin-export
+yarn
+yarn export
+```
+
+> Note that this package is powered by [puppeteer](https://github.com/GoogleChrome/puppeteer), if you are in a mysterious wall, consider setting [environment variables](https://github.com/GoogleChrome/puppeteer/blob/v1.11.0/docs/api.md#environment-variables) before installation.
+
+```bash
+PUPPETEER_DOWNLOAD_HOST=https://npm.taobao.org/mirrors
+```
+
 ## Contributing
 
 1. Fork it!
