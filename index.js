@@ -11,6 +11,12 @@ logger.setOptions({ logLevel: 1 })
 module.exports = (opts, ctx) => ({
   name: 'vuepress-plugin-export',
 
+  chainWebpack(config) {
+    config.plugins.delete('bar')
+    // TODO vuepress should give plugin the ability to remove this plugin
+    config.plugins.delete('vuepress-log')
+  },
+
   extendCli(cli) {
     cli
       .command('export [targetDir]', 'export current vuepress site to a PDF file')
