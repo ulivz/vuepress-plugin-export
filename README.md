@@ -4,7 +4,7 @@
 
 ## Features
 
-- Automatically merge all of your pages.
+- Merge all of your pages automatically.
 
 ## TODO
 
@@ -12,6 +12,7 @@
 - Inject Table of Contents.
 - Inject Page Numbers.
 - Generate different PDF files per locale.
+- Transform all of links.
 
 ## Install
 

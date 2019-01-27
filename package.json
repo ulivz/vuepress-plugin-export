@@ -6,6 +6,7 @@
   "files": [
     "index.js"
   ],
+  "licenses": "MIT",
   "scripts": {
     "export": "vuepress export example",
     "test": "npm run lint && jest",
