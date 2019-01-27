@@ -1,6 +1,6 @@
 {
   "name": "vuepress-plugin-export",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Export your VuePress site to a PDF file",
   "main": "index.js",
   "files": [
