@@ -73,7 +73,7 @@ async function generatePDF(ctx, port, host) {
   })
 
   await browser.close()
-  // fs.removeSync(tempDir)
+  fs.removeSync(tempDir)
 }
 
 
