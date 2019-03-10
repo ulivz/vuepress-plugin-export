@@ -1,8 +1,8 @@
 # vuepress-plugin-export
 
-[![NPM version](https://badgen.net/npm/v/vuepress-plugin-export)](https://npmjs.com/package/vuepress-plugin-export) [![NPM downloads](https://badgen.net/npm/dm/vuepress-plugin-export)](https://npmjs.com/package/vuepress-plugin-export) [![CircleCI](https://badgen.net/circleci/github/ulivz/vuepress-plugin-export/master)](https://circleci.com/gh/ulivz/vuepress-plugin-export/tree/master) 
+[![NPM version](https://badgen.net/npm/v/vuepress-plugin-export)](https://npmjs.com/package/vuepress-plugin-export) [![NPM downloads](https://badgen.net/npm/dm/vuepress-plugin-export)](https://npmjs.com/package/vuepress-plugin-export)
 
-> This plugin requires VuePress >= 1.0.0-alpha.44.
+> This plugin requires VuePress >= **1.0.0-alpha.44**.
 
 ## Features
 
