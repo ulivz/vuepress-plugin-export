@@ -8,7 +8,7 @@ const { red, yellow, gray } = chalk
 // Keep silent before running custom command.
 logger.setOptions({ logLevel: 1 })
 
-module.exports = (opts, ctx) => ({
+module.exports = (opts = {}, ctx) => ({
   name: 'vuepress-plugin-export',
 
   chainWebpack(config) {
@@ -23,23 +23,24 @@ module.exports = (opts, ctx) => ({
       .allowUnknownOptions()
       .action(async (dir = '.') => {
         dir = join(process.cwd(), dir)
-        const { port, host, server } = await dev.prepare(dir, {}, ctx)
-
-        server.listen(port, host, async err => {
-          if (err) {
-            console.error(red(err))
-          }
+        try {
+          const nCtx = await dev({
+            sourceDir: dir,
+            clearScreen: false,
+            theme: opts.theme || '@vuepress/default'
+          })
           logger.setOptions({ logLevel: 3 })
           logger.info(`Start to generate current site to PDF ...`)
           try {
-            await generatePDF(ctx, port, host)
+            await generatePDF(ctx, nCtx.devProcess.port, nCtx.devProcess.host)
           } catch (error) {
             console.error(red(error))
           }
-          server.close()
-          // TODO remove process.exit and exit naturaly.
+          nCtx.devProcess.server.close()
           process.exit(0)
-        })
+        } catch (e) {
+          throw e
+        }
       })
   }
 })

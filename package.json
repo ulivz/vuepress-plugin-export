@@ -30,7 +30,8 @@
     "lint-staged": "8.1.0",
     "jest": "23.6.0",
     "release-it": "v7.4.8",
-    "conventional-changelog-cli": "^2.0.1"
+    "conventional-changelog-cli": "^2.0.1",
+    "vuepress": "^1.0.0-alpha.44"
   },
   "jest": {
     "testEnvironment": "node"
@@ -55,6 +56,6 @@
     ]
   },
   "peerDependencies": {
-    "vuepress": ">=1.0.0-alpha.33"
+    "vuepress": ">=1.0.0-alpha.44"
   }
 }
