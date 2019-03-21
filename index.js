@@ -32,7 +32,11 @@ module.exports = (opts = {}, ctx) => ({
           logger.setOptions({ logLevel: 3 })
           logger.info(`Start to generate current site to PDF ...`)
           try {
-            await generatePDF(ctx, nCtx.devProcess.port, nCtx.devProcess.host)
+            await generatePDF(nCtx, {
+              port: nCtx.devProcess.port,
+              host: nCtx.devProcess.host,
+              sorter: opts.sorter
+            })
           } catch (error) {
             console.error(red(error))
           }
@@ -45,12 +49,22 @@ module.exports = (opts = {}, ctx) => ({
   }
 })
 
-async function generatePDF(ctx, port, host) {
+async function generatePDF(ctx, {
+  port,
+  host,
+  sorter,
+}) {
   const { pages, tempPath, siteConfig } = ctx
   const tempDir = join(tempPath, 'pdf')
   fs.ensureDirSync(tempDir)
 
-  const exportPages = pages.map(page => {
+  let exportPages = pages.slice(0)
+
+  if (typeof sorter === 'function') {
+    exportPages = exportPages.sort(sorter)
+  }
+
+  exportPages = exportPages.map(page => {
     return {
       url: page.path,
       title: page.title,
@@ -80,14 +94,13 @@ async function generatePDF(ctx, port, host) {
       format: 'A4'
     })
 
-    logger.success(
-      `Generated ${yellow(title)} ${gray(`${url}`)}`
-    )
+    logger.success(`Generated ${yellow(title)} ${gray(`${url}`)}`)
   }
 
   const files = exportPages.map(({ path }) => path)
   const outputFilename = siteConfig.title || 'site'
   const outputFile = `${outputFilename}.pdf`
+
   await new Promise(resolve => {
     PDFMerge(files, outputFile, err => {
       if (err) {
