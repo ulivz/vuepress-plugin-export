@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer')
 const PDFMerge = require('easy-pdf-merge')
-const { join } = require('path')
+const { join, dirname } = require('path')
 const { dev } = require('vuepress')
 const { fs, logger, chalk } = require('@vuepress/shared-utils')
 const { red, yellow, gray } = chalk
@@ -136,13 +136,16 @@ async function generatePDF(context, {
     const outputFile = createOutputFilename(options.dest, siteConfig, 'site')
     if (files.length === 0) {
       logger.warn('WARN. Found no files to export!')
-    }
-    else if (files.length === 1) {
+    } else if (files.length === 1) {
       const [filename] = files
+      fs.mkdirSync(dirname(outputFile), { recursive: true })
+
       fs.copyFileSync(filename, outputFile)
       logger.success(`Export ${yellow(outputFile)} file!`)
     } else {
       await new Promise(resolve => {
+        fs.mkdirSync(dirname(outputFile), { recursive: true })
+
         PDFMerge(files, outputFile, error => {
           if (error) {
             throw error
@@ -154,5 +157,5 @@ async function generatePDF(context, {
     }
   }
 
-  fs.removeSync(tempDir)
+  // fs.removeSync(tempDir)
 }
