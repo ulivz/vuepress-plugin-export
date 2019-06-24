@@ -41,13 +41,13 @@ module.exports = (options = {}, context) => ({
               options
             })
           } catch (error) {
-            console.error(red(error))
+            logger.error(red(error))
           }
 
           devContext.devProcess.server.close()
           process.exit(0)
-        } catch (e) {
-          throw e
+        } catch (error) {
+          throw error
         }
       })
   }
@@ -55,7 +55,7 @@ module.exports = (options = {}, context) => ({
 
 const filter = (filter) => {
   if (typeof filter === 'function') {
-    return filter(page)
+    return (page) => filter(page.location, page)
   }
 
   return (page) => {
@@ -85,8 +85,6 @@ async function generatePDF(context, {
   const { pages, tempPath, siteConfig } = context
   const tempDir = join(tempPath, 'pdf')
 
-  console.log('+++ base', base);
-
   multiOptions = Array.isArray(multiOptions) ? multiOptions : [multiOptions]
 
   fs.ensureDirSync(tempDir)
@@ -104,9 +102,7 @@ async function generatePDF(context, {
     }
   })
 
-  console.log('+++ export pages', exportPages);
-
-  const promises = exportPages.map(async exportPage => {
+  for (const exportPage of exportPages) {
     const {
       location,
       path: pagePath,
@@ -114,18 +110,12 @@ async function generatePDF(context, {
       title
     } = exportPage
 
-    console.log('+++ goto', location);
-
     await browserPage.goto(
       location,
       { waitUntil: 'networkidle2' }
     )
 
-    console.log('+++ went', location);
-
     await new Promise(resolve => setTimeout(resolve, 5000))
-
-    console.log('+++ wait');
 
     await browserPage.pdf({
       path: pagePath,
@@ -133,11 +123,8 @@ async function generatePDF(context, {
     })
 
     logger.success(`Generated ${yellow(title)} ${gray(`${url}`)}`)
+  }
 
-    console.log('+++ success', title, url);
-  })
-
-  await Promise.all(promises);
   await browser.close()
 
   for (const options of multiOptions) {
@@ -147,17 +134,18 @@ async function generatePDF(context, {
       .map(({ path }) => path)
 
     const outputFile = createOutputFilename(options.dest, siteConfig, 'site')
-
-    if (files.length === 1) {
+    if (files.length === 0) {
+      logger.warn('WARN. Found no files to export!')
+    }
+    else if (files.length === 1) {
       const [filename] = files;
-      console.log('+++ filename', filename, outputFile)
       fs.copyFileSync(filename, outputFile)
+      logger.success(`Export ${yellow(outputFile)} file!`)
     } else {
-      console.log('+++ merge', files);
       await new Promise(resolve => {
-        PDFMerge(files, outputFile, err => {
-          if (err) {
-            throw err
+        PDFMerge(files, outputFile, error => {
+          if (error) {
+            throw error
           }
           logger.success(`Export ${yellow(outputFile)} file!`)
           resolve()
@@ -166,5 +154,5 @@ async function generatePDF(context, {
     }
   }
 
-  // fs.removeSync(tempDir)
+  fs.removeSync(tempDir)
 }
