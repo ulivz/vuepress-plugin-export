@@ -39,6 +39,40 @@ Then run:
 vuepress export [path/to/your/docs]
 ```
 
+## Generating multiple output files
+
+You can configure this plugin to export multiple files.
+Add config options:
+
+```javascript
+module.exports: ['vuepress-plugin-export', [{
+  filter: (location) => !location.includes('export'),
+  dest: () => 'docs/public/export.pdf',
+}, {
+  filter: /\/en\///,
+  dest: (siteConfig) => `docs/public/${siteConfig.title}.en.pdf`,
+}]]
+```
+
+Then run:
+
+```bash
+vuepress export [path/to/your/docs]
+```
+
+### Config options
+- filter: RegExp | Function(location: string, page: PageConfig) => boolean
+- dest: (config: [VuepressPluginConfig](https://vuepress.vuejs.org/config/#basic-config)) => string
+- sorter: (page: PageConfig => number
+
+with PageConfig:
+```
+url: string
+location: string
+title: string
+path: string
+```
+
 ## Development
 
 ```bash
