@@ -53,7 +53,7 @@ module.exports = (options = {}, context) => ({
   }
 })
 
-const filter = (filter) => {
+const applyFilter = (filter) => {
   if (typeof filter === 'function') {
     return (page) => filter(page.location, page)
   }
@@ -63,16 +63,16 @@ const filter = (filter) => {
   }
 }
 
-const createOutputFilename = (dest, siteConfig, fallback) => {
+const createOutputFilename = (dest, pluginConfig, fallback) => {
   if (typeof dest === 'function') {
-    return dest(siteConfig)
+    return dest(pluginConfig)
   }
 
   if (typeof dest === 'string') {
     return dest
   }
 
-  return `${siteConfig.title || String(fallback)}.pdf`
+  return `${pluginConfig.title || String(fallback)}.pdf`
 }
 
 async function generatePDF(context, {
@@ -129,7 +129,7 @@ async function generatePDF(context, {
 
   for (const options of multiOptions) {
     const files = exportPages
-      .filter(filter(options.filter))
+      .filter(applyFilter(options.filter))
       .sort(options.sorter)
       .map(({ path }) => path)
 
@@ -138,7 +138,7 @@ async function generatePDF(context, {
       logger.warn('WARN. Found no files to export!')
     }
     else if (files.length === 1) {
-      const [filename] = files;
+      const [filename] = files
       fs.copyFileSync(filename, outputFile)
       logger.success(`Export ${yellow(outputFile)} file!`)
     } else {
