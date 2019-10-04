@@ -11,7 +11,9 @@
     "export": "vuepress export example",
     "test": "npm run lint && jest",
     "lint": "xo",
-    "release": "release-it"
+    "release": "release-it",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "url": "ulivz/vuepress-plugin-export",
@@ -21,7 +23,8 @@
   "license": "MIT",
   "dependencies": {
     "puppeteer": "^1.11.0",
-    "easy-pdf-merge": "^0.2.0"
+    "easy-pdf-merge": "^0.2.0",
+    "snyk": "^1.230.5"
   },
   "devDependencies": {
     "xo": "0.23.0",
@@ -57,5 +60,6 @@
   },
   "peerDependencies": {
     "vuepress": ">=1.0.0-alpha.44"
-  }
+  },
+  "snyk": true
 }
