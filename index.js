@@ -30,13 +30,20 @@ module.exports = (options = {}, context) => ({
             theme: options.theme || '@vuepress/default'
           })
 
+          await new Promise(resolve => {
+            devContext.devProcess.server.compiler.hooks.done.tap('webpack-dev-server', () => {
+              console.log('VuePress dev server compiler done')
+              resolve()
+            })
+          })
+
           logger.setOptions({ logLevel: 3 })
           logger.info(`Start to generate current site to PDF ...`)
 
           try {
             await generatePDF(devContext, {
               port: devContext.devProcess.port,
-              host: devContext.devProcess.host,
+              host: devContext.devProcess.displayHost, // See vuejs/vuepress@4d5c50e
               base: devContext.base,
               options
             })
@@ -52,6 +59,16 @@ module.exports = (options = {}, context) => ({
       })
   }
 })
+
+const defineBundles = (options, exportPages) => {
+  return (typeof options.bundles === 'function')
+    ? options.bundles(exportPages)
+    : Array.isArray(options.bundles)
+      ? options.bundles
+      : options.bundles
+        ? [options.bundles]
+        : {}
+}
 
 const applyFilter = (filter) => {
   if (typeof filter === 'function') {
@@ -79,13 +96,10 @@ async function generatePDF(context, {
   port,
   host,
   base,
-  // options can be either a single or multiple option objects
-  options: multiOptions,
+  options,
 }) {
   const { pages, tempPath, siteConfig } = context
   const tempDir = join(tempPath, 'pdf')
-
-  multiOptions = Array.isArray(multiOptions) ? multiOptions : [multiOptions]
 
   fs.ensureDirSync(tempDir)
 
@@ -97,7 +111,7 @@ async function generatePDF(context, {
     return {
       url: page.path,
       title: page.title,
-      location: `http://${host}:${port}${base || ''}${page.path}`.replace(/\/\//g, '/'),
+      location: `http://${host}:${port}${base || ''}${page.path.slice(1)}`,
       path: `${tempDir}/${page.key}.pdf`
     }
   })
@@ -115,8 +129,6 @@ async function generatePDF(context, {
       { waitUntil: 'networkidle2' }
     )
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
-
     await browserPage.pdf({
       path: pagePath,
       format: 'A4'
@@ -127,13 +139,15 @@ async function generatePDF(context, {
 
   await browser.close()
 
-  for (const options of multiOptions) {
+  const bundles = defineBundles(options, exportPages)
+
+  for (const bundle of bundles) {
     const files = exportPages
-      .filter(applyFilter(options.filter))
-      .sort(options.sorter)
+      .filter(applyFilter(bundle.filter))
+      .sort(bundle.sorter)
       .map(({ path }) => path)
 
-    const outputFile = createOutputFilename(options.dest, siteConfig, 'site')
+    const outputFile = createOutputFilename(bundle.dest, siteConfig, 'site')
     if (files.length === 0) {
       logger.warn('WARN. Found no files to export!')
     } else if (files.length === 1) {

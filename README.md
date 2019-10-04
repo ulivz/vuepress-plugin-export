@@ -45,13 +45,16 @@ You can configure this plugin to export multiple files.
 Add config options:
 
 ```javascript
-module.exports: ['vuepress-plugin-export', [{
-  filter: (location) => !location.includes('export'),
-  dest: () => 'docs/public/export.pdf',
-}, {
-  filter: /\/en\///,
-  dest: (siteConfig) => `docs/public/${siteConfig.title}.en.pdf`,
-}]]
+module.exports: ['vuepress-plugin-export', {
+  theme: '@vuepress/default',
+  bundles: [{
+    filter: (location) => !location.includes('export'),
+    dest: () => 'docs/public/export.pdf',
+  }, {
+    filter: /\/en\///,
+    dest: (siteConfig) => `docs/public/${siteConfig.title}.en.pdf`,
+  }]
+}]
 ```
 
 Then run:
@@ -61,9 +64,11 @@ vuepress export [path/to/your/docs]
 ```
 
 ### Config options
-- filter: RegExp | Function(location: string, page: PageConfig) => boolean
-- dest: (config: [VuepressPluginConfig](https://vuepress.vuejs.org/config/#basic-config)) => string
-- sorter: (page: PageConfig => number
+- theme: String
+- bundles: Array | Function(Array[PageConfig]) => Array[bundle]
+- bundles[].filter: RegExp | Function(location: string, page: PageConfig) => boolean
+- bundles[].dest: (config: VuepressPluginConfig(https://vuepress.vuejs.org/config/#basic-config)) => string
+- bundles[].sorter: Function(PageConfig, PageConfig) => -1, 0, 1
 
 with PageConfig:
 ```
@@ -87,6 +92,8 @@ yarn export
 ```bash
 PUPPETEER_DOWNLOAD_HOST=https://npm.taobao.org/mirrors
 ```
+
+> Note that this pavkage is powered by [easy-pdf-merge](https://github.com/karuppiah7890/easy-pdf-merge), Java 6 or higher must be present.
 
 ## Contributing
 
