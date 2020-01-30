@@ -27,7 +27,7 @@ module.exports = (opts = {}, ctx) => ({
           const nCtx = await dev({
             sourceDir: dir,
             clearScreen: false,
-            theme: opts.theme || '@vuepress/default'
+            theme: opts.theme || '@vuepress/default',
           })
           logger.setOptions({ logLevel: 3 })
           logger.info(`Start to generate current site to PDF ...`)
@@ -35,7 +35,8 @@ module.exports = (opts = {}, ctx) => ({
             await generatePDF(nCtx, {
               port: nCtx.devProcess.port,
               host: nCtx.devProcess.host,
-              sorter: opts.sorter
+              sorter: opts.sorter,
+              page: opts.page,
             })
           } catch (error) {
             console.error(red(error))
@@ -53,6 +54,7 @@ async function generatePDF(ctx, {
   port,
   host,
   sorter,
+  page,
 }) {
   const { pages, tempPath, siteConfig } = ctx
   const tempDir = join(tempPath, 'pdf')
@@ -89,10 +91,10 @@ async function generatePDF(ctx, {
       { waitUntil: 'networkidle2' }
     )
 
-    await browserPage.pdf({
+    await browserPage.pdf(Object.assign({}, {
       path: pagePath,
       format: 'A4'
-    })
+    }, page))
 
     logger.success(`Generated ${yellow(title)} ${gray(`${url}`)}`)
   }
