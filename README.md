@@ -47,6 +47,7 @@ Add config options:
 ```javascript
 module.exports: ['vuepress-plugin-export', {
   theme: '@vuepress/default',
+  puppeteer: { args: ['--no-sandbox'] },
   bundles: [{
     filter: (location) => !location.includes('export'),
     dest: () => 'docs/public/export.pdf',
@@ -65,6 +66,7 @@ vuepress export [path/to/your/docs]
 
 ### Config options
 - theme: String
+- puppeteer: Object
 - bundles: Array | Function(Array[PageConfig]) => Array[bundle]
 - bundles[].filter: RegExp | Function(location: string, page: PageConfig) => boolean
 - bundles[].dest: (config: VuepressPluginConfig(https://vuepress.vuejs.org/config/#basic-config)) => string

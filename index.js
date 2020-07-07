@@ -103,7 +103,7 @@ async function generatePDF(context, {
 
   fs.ensureDirSync(tempDir)
 
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch(options.puppeteer)
   const browserPage = await browser.newPage()
 
   // Generate all pages on bulk
