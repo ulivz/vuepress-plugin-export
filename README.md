@@ -39,6 +39,47 @@ Then run:
 vuepress export [path/to/your/docs]
 ```
 
+## Generating multiple output files
+
+You can configure this plugin to export multiple files.
+Add config options:
+
+```javascript
+module.exports: ['vuepress-plugin-export', {
+  theme: '@vuepress/default',
+  puppeteer: { args: ['--no-sandbox'] },
+  bundles: [{
+    filter: (location) => !location.includes('export'),
+    dest: () => 'docs/public/export.pdf',
+  }, {
+    filter: /\/en\///,
+    dest: (siteConfig) => `docs/public/${siteConfig.title}.en.pdf`,
+  }]
+}]
+```
+
+Then run:
+
+```bash
+vuepress export [path/to/your/docs]
+```
+
+### Config options
+- theme: String
+- puppeteer: Object
+- bundles: Array | Function(Array[PageConfig]) => Array[bundle]
+- bundles[].filter: RegExp | Function(location: string, page: PageConfig) => boolean
+- bundles[].dest: (config: VuepressPluginConfig(https://vuepress.vuejs.org/config/#basic-config)) => string
+- bundles[].sorter: Function(PageConfig, PageConfig) => -1, 0, 1
+
+with PageConfig:
+```
+url: string
+location: string
+title: string
+path: string
+```
+
 ## Development
 
 ```bash
@@ -53,6 +94,8 @@ yarn export
 ```bash
 PUPPETEER_DOWNLOAD_HOST=https://npm.taobao.org/mirrors
 ```
+
+> Note that this pavkage is powered by [easy-pdf-merge](https://github.com/karuppiah7890/easy-pdf-merge), Java 6 or higher must be present.
 
 ## Contributing
 

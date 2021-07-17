@@ -20,18 +20,17 @@
   "author": "ulivz<chl814@foxmail.com>",
   "license": "MIT",
   "dependencies": {
-    "puppeteer": "^1.11.0",
-    "easy-pdf-merge": "^0.2.0"
+    "puppeteer": ">=1.17.0",
+    "easy-pdf-merge": "^0.2.1"
   },
   "devDependencies": {
-    "xo": "0.23.0",
     "eslint-config-sherry": "0.0.1",
-    "husky": "1.2.0",
-    "lint-staged": "8.1.0",
-    "jest": "23.6.0",
-    "release-it": "v7.4.8",
-    "conventional-changelog-cli": "^2.0.1",
-    "vuepress": "^1.0.0-alpha.44"
+    "husky": "2.4.1",
+    "lint-staged": "8.2.1",
+    "jest": "24.8.0",
+    "release-it": "^12.3.0",
+    "conventional-changelog-cli": "^2.0.21",
+    "vuepress": "^1.0.0"
   },
   "jest": {
     "testEnvironment": "node"
@@ -56,6 +55,6 @@
     ]
   },
   "peerDependencies": {
-    "vuepress": ">=1.0.0-alpha.44"
+    "vuepress": ">=1.0.0"
   }
 }
